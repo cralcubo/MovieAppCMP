@@ -1,41 +1,45 @@
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import org.jetbrains.compose.resources.ExperimentalResourceApi
-import org.jetbrains.compose.resources.painterResource
+import com.croman.movieapp.business.MovieService
+import com.croman.movieapp.business.api.tmdb.TmdbMovieApi
+import com.croman.movieapp.view.MovieViewModel
+import com.croman.movieapp.view.MoviesListView
+import dev.icerock.moko.mvvm.compose.getViewModel
+import dev.icerock.moko.mvvm.compose.viewModelFactory
+import io.ktor.client.HttpClient
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.serialization.kotlinx.json.json
+import kotlinx.serialization.json.Json
 
-@OptIn(ExperimentalResourceApi::class)
+private val httpClient =
+    HttpClient {
+        expectSuccess = true // if request was not successful an exception is thrown
+        install(ContentNegotiation) {
+            json(Json {
+                prettyPrint = true
+                isLenient = true
+                ignoreUnknownKeys = true
+            })
+        }
+    }
+
 @Composable
 fun App() {
     MaterialTheme {
-        var greetingText by remember { mutableStateOf("Hello, World!") }
-        var showImage by remember { mutableStateOf(false) }
-        Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-            Button(onClick = {
-                greetingText = "Hello, ${getPlatformName()}"
-                showImage = !showImage
-            }) {
-                Text(greetingText)
-            }
-            AnimatedVisibility(showImage) {
-                Image(
-                    painterResource("compose-multiplatform.xml"),
-                    null
-                )
-            }
-        }
+        val viewModel = getViewModel(Unit, viewModelFactory { MovieViewModel(
+            MovieService(
+                TmdbMovieApi(httpClient)
+            )
+        ) })
+
+        MainScreen(viewModel)
     }
 }
 
-expect fun getPlatformName(): String
+@Composable
+fun MainScreen(viewModel: MovieViewModel) {
+    val movieState by viewModel.movieState.collectAsState()
+    MoviesListView(movies = movieState)
+}
