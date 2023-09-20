@@ -22,6 +22,7 @@ kotlin {
     val ktorVersion = "2.3.4"
     val mokoVersion = "0.16.1"
     val koinVersion = "3.5.0"
+    val koinCompose = "1.1.0"
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -37,8 +38,10 @@ kotlin {
                 implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
                 implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
                 implementation("dev.icerock.moko:mvvm-core:$mokoVersion") // only ViewModel, EventsDispatcher, Dispatchers.UI
-                implementation("dev.icerock.moko:mvvm-compose:$mokoVersion") // api mvvm-core, getViewModel for Compose Multiplatfrom
+//                implementation("dev.icerock.moko:mvvm-compose:$mokoVersion") // api mvvm-core, getViewModel for Compose Multiplatfrom
+
                 implementation("io.insert-koin:koin-core:$koinVersion")
+                implementation("io.insert-koin:koin-compose:$koinCompose")
             }
         }
         val androidMain by getting {
@@ -48,7 +51,8 @@ kotlin {
                 api("androidx.core:core-ktx:1.10.1")
 
                 implementation("io.ktor:ktor-client-okhttp:$ktorVersion")
-                implementation("io.insert-koin:koin-androidx-compose:$koinVersion")
+//                implementation("io.insert-koin:koin-androidx-compose:$koinVersion")
+                implementation("io.insert-koin:koin-android:$koinVersion")
             }
         }
         val iosX64Main by getting
