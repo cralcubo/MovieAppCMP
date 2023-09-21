@@ -12,6 +12,7 @@ import kotlinx.serialization.json.Json
 import org.koin.core.definition.Definition
 import org.koin.core.definition.KoinDefinition
 import org.koin.core.module.Module
+import org.koin.core.module.dsl.singleOf
 import org.koin.core.qualifier.Qualifier
 import org.koin.dsl.module
 
@@ -30,7 +31,7 @@ private val httpClient =
 fun appModule() = module {
     single { httpClient }
     single<MovieApi> { TmdbMovieApi(get()) }
-    single { MovieService(get()) }
+    singleOf(::MovieService)
     viewModelDefinition { MovieViewModel(get()) }
 }
 expect inline fun <reified T : ViewModel> Module.viewModelDefinition(
