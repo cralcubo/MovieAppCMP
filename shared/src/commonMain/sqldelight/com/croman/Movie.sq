@@ -1,0 +1,13 @@
+CREATE TABLE IF NOT EXISTS MovieEntity(
+    id INTEGER NOT NULL PRIMARY KEY,
+    rating INTEGER NOT NULL
+);
+
+retrieveMovie:
+SELECT * FROM MovieEntity WHERE id = ?;
+
+retrieveAllMovies:
+SELECT * FROM MovieEntity;
+
+insertMovie:
+INSERT OR REPLACE INTO MovieEntity(id, rating) VALUES (?, ?);

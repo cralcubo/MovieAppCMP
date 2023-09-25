@@ -1,8 +1,12 @@
 package com.croman.movieapp.di
 
+import app.cash.sqldelight.db.SqlDriver
+import com.croman.MovieDatabase
 import com.croman.movieapp.business.MovieService
 import com.croman.movieapp.business.api.MovieApi
 import com.croman.movieapp.business.api.tmdb.TmdbMovieApi
+import com.croman.movieapp.dao.MovieDao
+import com.croman.movieapp.dao.sql_delight.MovieDaoImpl
 import com.croman.movieapp.view.MovieViewModel
 import dev.icerock.moko.mvvm.viewmodel.ViewModel
 import io.ktor.client.HttpClient
@@ -30,6 +34,9 @@ private val httpClient =
 
 fun appModule() = module {
     single { httpClient }
+    sqlDriverDefinition()
+    single { MovieDatabase(get()) }
+    single<MovieDao> { MovieDaoImpl(get()) }
     single<MovieApi> { TmdbMovieApi(get()) }
     singleOf(::MovieService)
     viewModelDefinition { MovieViewModel(get()) }
@@ -38,3 +45,5 @@ expect inline fun <reified T : ViewModel> Module.viewModelDefinition(
     qualifier: Qualifier? = null,
     noinline definition: Definition<T>
 ): KoinDefinition<T>
+
+expect fun Module.sqlDriverDefinition() : KoinDefinition<SqlDriver>
