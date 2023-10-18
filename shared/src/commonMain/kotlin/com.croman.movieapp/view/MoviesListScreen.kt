@@ -1,12 +1,14 @@
 package com.croman.movieapp.view
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -22,11 +24,22 @@ import com.croman.movieapp.model.Movie
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
 
+@Composable
+fun MoviesListView(movies: List<Movie>) {
+    LazyColumn {
+        items(movies) {
+            MovieCard(movie = it)
+        }
+    }
+}
+
 private const val IMDB_POSTER_BASE_URL = "https://image.tmdb.org/t/p/w500"
 @Composable
-fun MovieScreen(movie: Movie) {
+fun MovieCard(movie: Movie) {
     Card(
-        modifier = Modifier.padding(16.dp).fillMaxWidth(),
+        modifier = Modifier
+//            .clickable(onClick = onClick) TODO
+            .height(200.dp),
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(8.dp)
     ) {
@@ -34,16 +47,15 @@ fun MovieScreen(movie: Movie) {
             KamelImage(
                 resource = asyncPainterResource("$IMDB_POSTER_BASE_URL/${movie.posterPath}"),
                 contentDescription = movie.description,
-                modifier = Modifier.padding(16.dp).fillMaxWidth().height(100.dp),
+                modifier = Modifier.width(150.dp),
                 contentScale = ContentScale.Fit
             )
 
             Column(modifier = Modifier.padding(8.dp)) {
                 Text(text = movie.title, fontWeight = FontWeight.Bold, fontSize = 20.sp)
                 Text(text = "Rating: ${movie.rating}")
-                Text(text = movie.description, textAlign = TextAlign.Justify)
+                Text(text = movie.description)
             }
         }
     }
-
 }
